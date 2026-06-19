@@ -167,20 +167,20 @@ REVEAL_JS = """
       drawSquiggle();
     }
   }
-  // Trip mode: toggle + persistence across pages
-  var setTrip = function(on){
-    document.documentElement.classList.toggle('trip', on);
-    try { localStorage.setItem('trip', on ? '1' : '0'); } catch(e){}
-    document.querySelectorAll('.trip-toggle').forEach(function(b){
+  // Party mode: toggle + persistence across pages
+  var setParty = function(on){
+    document.documentElement.classList.toggle('party', on);
+    try { localStorage.setItem('party', on ? '1' : '0'); } catch(e){}
+    document.querySelectorAll('.party-toggle').forEach(function(b){
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
       b.classList.toggle('on', on);
-      b.textContent = on ? '✦ Trip: on' : '✦ Trip';
+      b.textContent = on ? '🪩 Party Mode: on' : '🪩 Party Mode';
     });
   };
-  setTrip(document.documentElement.classList.contains('trip'));
-  document.querySelectorAll('.trip-toggle').forEach(function(b){
+  setParty(document.documentElement.classList.contains('party'));
+  document.querySelectorAll('.party-toggle').forEach(function(b){
     b.addEventListener('click', function(){
-      setTrip(!document.documentElement.classList.contains('trip'));
+      setParty(!document.documentElement.classList.contains('party'));
     });
   });
 
@@ -204,10 +204,10 @@ REVEAL_JS = """
       el.addEventListener('mouseenter', grow);
       el.addEventListener('mouseleave', shrink);
     });
-    // Rainbow cursor trail — trip mode only
+    // Rainbow cursor trail — party mode only
     var lastTrail = 0;
     window.addEventListener('mousemove', function(e){
-      if (!document.documentElement.classList.contains('trip')) return;
+      if (!document.documentElement.classList.contains('party')) return;
       var now = Date.now();
       if (now - lastTrail < 45) return;
       lastTrail = now;
@@ -244,12 +244,13 @@ def head(title, prefix=""):
 <title>{title}</title>
 {FONTS}
 <link rel="stylesheet" href="{prefix}style.css">
-<script>try{{if(localStorage.getItem('trip')==='1')document.documentElement.classList.add('trip');}}catch(e){{}}</script>
+<script>try{{if(localStorage.getItem('party')==='1')document.documentElement.classList.add('party');}}catch(e){{}}</script>
 </head>
 <body>"""
 
 def nav(prefix=""):
     return f"""
+<div class="lasers" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <svg class="defs" width="0" height="0" aria-hidden="true"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="18" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter></defs></svg>
 <div class="colorbar"></div>
 <header class="nav">
@@ -259,11 +260,11 @@ def nav(prefix=""):
     <a href="{prefix}about.html">About</a>
     <a href="https://www.instagram.com/colorintheworld/" target="_blank" rel="noopener">Art</a>
     <a href="{prefix}dana-komsky-resume.pdf" target="_blank" rel="noopener">Résumé</a>
-    <button class="trip-toggle" type="button" aria-pressed="false">✦ Trip</button>
+    <button class="party-toggle" type="button" aria-pressed="false">🪩 Party Mode</button>
     <a class="nav-cta" href="mailto:dekomsky@gmail.com">Contact</a>
   </nav>
 </header>
-<div class="trip-wrap">"""
+<div class="party-wrap">"""
 
 def footer(prefix=""):
     return f"""
@@ -329,7 +330,8 @@ def build_index():
       <div class="hero-actions" data-reveal><a class="btn" href="#work">See the work</a><a class="btn ghost" href="mailto:dekomsky@gmail.com">Get in touch</a></div>
     </div>
     <div class="hero-portrait" data-reveal>
-      <img src="images/dana.jpg" alt="Dana Komsky">
+      <div class="frame"><img src="images/dana.jpg" alt="Dana Komsky"></div>
+      <div class="cutout" aria-hidden="true"><img src="images/dana-cutout.png" alt="" onerror="var p=this.closest('.hero-portrait'); if(p)p.classList.add('no-cutout'); this.closest('.cutout').remove();"></div>
     </div>
   </div>
 </section>
