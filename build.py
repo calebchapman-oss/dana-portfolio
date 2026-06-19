@@ -251,6 +251,8 @@ def head(title, prefix=""):
 def nav(prefix=""):
     return f"""
 <div class="lasers" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="strobe" aria-hidden="true"></div>
+<div class="disco" aria-hidden="true"><div class="disco-rope"><span class="disco-cord"></span><span class="disco-ball"></span></div></div>
 <svg class="defs" width="0" height="0" aria-hidden="true"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="18" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter></defs></svg>
 <div class="colorbar"></div>
 <header class="nav">

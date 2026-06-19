@@ -273,12 +273,12 @@ html.party .blobs span{mix-blend-mode:screen}
 .lasers{position:fixed;inset:0;z-index:44;pointer-events:none;overflow:hidden;display:none;mix-blend-mode:screen}
 html.party .lasers{display:block}
 .lasers i{position:absolute;height:3px;width:200vmax;border-radius:3px;opacity:.7;will-change:transform}
-.lasers i:nth-child(1){left:-3%;top:-1%;transform-origin:left center;background:linear-gradient(90deg,transparent,#ff2e93 35%,#fff 50%,#ff2e93 65%,transparent);box-shadow:0 0 14px 2px #ff2e93;animation:sweepL 7s ease-in-out infinite}
-.lasers i:nth-child(2){left:-3%;top:-1%;transform-origin:left center;background:linear-gradient(90deg,transparent,#21e6c1 35%,#fff 50%,#21e6c1 65%,transparent);box-shadow:0 0 14px 2px #21e6c1;animation:sweepL2 9s ease-in-out infinite}
-.lasers i:nth-child(3){left:-3%;top:-1%;transform-origin:left center;background:linear-gradient(90deg,transparent,#ffd166 35%,#fff 50%,#ffd166 65%,transparent);box-shadow:0 0 14px 2px #ffd166;animation:sweepL3 11s ease-in-out infinite}
-.lasers i:nth-child(4){right:-3%;top:-1%;transform-origin:right center;background:linear-gradient(90deg,transparent,#5aa0ff 35%,#fff 50%,#5aa0ff 65%,transparent);box-shadow:0 0 14px 2px #5aa0ff;animation:sweepR 8s ease-in-out infinite}
-.lasers i:nth-child(5){right:-3%;top:-1%;transform-origin:right center;background:linear-gradient(90deg,transparent,#b98cff 35%,#fff 50%,#b98cff 65%,transparent);box-shadow:0 0 14px 2px #b98cff;animation:sweepR2 10s ease-in-out infinite}
-.lasers i:nth-child(6){right:-3%;top:-1%;transform-origin:right center;background:linear-gradient(90deg,transparent,#ff7a3d 35%,#fff 50%,#ff7a3d 65%,transparent);box-shadow:0 0 14px 2px #ff7a3d;animation:sweepR3 12s ease-in-out infinite}
+.lasers i:nth-child(1){left:-3%;top:-1%;transform-origin:left center;background:linear-gradient(90deg,transparent,#ff2e93 35%,#fff 50%,#ff2e93 65%,transparent);box-shadow:0 0 14px 2px #ff2e93;animation:sweepL 4s ease-in-out infinite}
+.lasers i:nth-child(2){left:-3%;top:-1%;transform-origin:left center;background:linear-gradient(90deg,transparent,#21e6c1 35%,#fff 50%,#21e6c1 65%,transparent);box-shadow:0 0 14px 2px #21e6c1;animation:sweepL2 5s ease-in-out infinite}
+.lasers i:nth-child(3){left:-3%;top:-1%;transform-origin:left center;background:linear-gradient(90deg,transparent,#ffd166 35%,#fff 50%,#ffd166 65%,transparent);box-shadow:0 0 14px 2px #ffd166;animation:sweepL3 6s ease-in-out infinite}
+.lasers i:nth-child(4){right:-3%;top:-1%;transform-origin:right center;background:linear-gradient(90deg,transparent,#5aa0ff 35%,#fff 50%,#5aa0ff 65%,transparent);box-shadow:0 0 14px 2px #5aa0ff;animation:sweepR 4.5s ease-in-out infinite}
+.lasers i:nth-child(5){right:-3%;top:-1%;transform-origin:right center;background:linear-gradient(90deg,transparent,#b98cff 35%,#fff 50%,#b98cff 65%,transparent);box-shadow:0 0 14px 2px #b98cff;animation:sweepR2 5.5s ease-in-out infinite}
+.lasers i:nth-child(6){right:-3%;top:-1%;transform-origin:right center;background:linear-gradient(90deg,transparent,#ff7a3d 35%,#fff 50%,#ff7a3d 65%,transparent);box-shadow:0 0 14px 2px #ff7a3d;animation:sweepR3 6.5s ease-in-out infinite}
 @keyframes sweepL{0%,100%{transform:rotate(8deg)}50%{transform:rotate(76deg)}}
 @keyframes sweepL2{0%,100%{transform:rotate(28deg)}50%{transform:rotate(60deg)}}
 @keyframes sweepL3{0%,100%{transform:rotate(3deg)}50%{transform:rotate(50deg)}}
@@ -297,3 +297,29 @@ html.party .hero-portrait.no-cutout .frame{animation:bob 4.5s ease-in-out 1s inf
 @keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(-1.2deg)}}
 
 @media(prefers-reduced-motion:reduce){.lasers i,html.party .cutout,html.party .cutout img,html.party .hero-portrait .frame{animation:none}}
+
+/* ---- Disco ball (drops from the roof in party mode) ---- */
+.disco{position:fixed;top:0;left:0;right:0;z-index:60;pointer-events:none;display:none;justify-content:center}
+html.party .disco{display:flex;animation:drop 1.3s cubic-bezier(.34,1.5,.5,1) both}
+@keyframes drop{from{transform:translateY(-220px)}to{transform:translateY(0)}}
+.disco-rope{display:flex;flex-direction:column;align-items:center;transform-origin:top center;animation:swing 6s ease-in-out 1.3s infinite}
+@keyframes swing{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.disco-cord{width:2px;height:52px;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.06))}
+.disco-ball{position:relative;width:58px;height:58px;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 34% 28%,#fff,#d6e6ff 16%,#9ab6dd 46%,#5a7497 78%,#3d556f 100%);
+  box-shadow:0 0 28px 6px rgba(150,190,255,.55),0 0 80px 18px rgba(255,80,180,.22)}
+.disco-ball::before{content:"";position:absolute;inset:0;border-radius:50%;mix-blend-mode:multiply;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 6px,transparent 6px 7px),
+                   repeating-linear-gradient(90deg,rgba(0,0,0,.22) 0 6px,transparent 6px 7px)}
+.disco-ball::after{content:"";position:absolute;inset:0;border-radius:50%;mix-blend-mode:screen;
+  background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(255,255,255,.38) 6px 7px),
+                   repeating-linear-gradient(0deg,transparent 0 12px,rgba(255,90,190,.32) 12px 14px);
+  animation:shimmer 2.2s linear infinite}
+@keyframes shimmer{to{background-position:14px 0,0 14px}}
+
+/* ---- Strobe (party only; tuned to soft double-pulses, not a harsh seizure strobe) ---- */
+.strobe{position:fixed;inset:0;z-index:43;pointer-events:none;display:none;mix-blend-mode:screen;background:#fff;opacity:0;will-change:opacity}
+html.party .strobe{display:block;animation:strobe 2.4s steps(1,end) infinite,strobehue 2.4s linear infinite}
+@keyframes strobe{0%{opacity:0}3%{opacity:.4}6%{opacity:0}12%{opacity:.4}15%{opacity:0}100%{opacity:0}}
+@keyframes strobehue{0%{background:#fff}25%{background:#ff2e93}50%{background:#21e6c1}75%{background:#ffd166}100%{background:#fff}}
+@media(prefers-reduced-motion:reduce){html.party .disco{animation:none;transform:translateY(0)}.disco-rope,.disco-ball::after{animation:none}html.party .strobe{display:none}}
