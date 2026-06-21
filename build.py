@@ -184,6 +184,16 @@ REVEAL_JS = """
     });
   });
 
+  // Project carousel arrows
+  document.querySelectorAll('.carousel').forEach(function(c){
+    var track = c.querySelector('.car-track');
+    if (!track) return;
+    var step = function(){ return Math.min(track.clientWidth * 0.8, 384); };
+    var prev = c.querySelector('.prev'), next = c.querySelector('.next');
+    if (prev) prev.addEventListener('click', function(){ track.scrollBy({left: -step(), behavior: 'smooth'}); });
+    if (next) next.addEventListener('click', function(){ track.scrollBy({left: step(), behavior: 'smooth'}); });
+  });
+
   // Color-dot cursor (desktop, fine pointer only)
   if (window.matchMedia('(hover:hover) and (pointer:fine)').matches) {
     var dot = document.createElement('div');
@@ -229,6 +239,54 @@ _TICK_ITEMS = ["New York Knicks", "2025 Clio Award Winner", "Madison Square Gard
 _tg = "".join('<span class="tick">' + i + '</span><i class="sep">✦</i>' for i in _TICK_ITEMS)
 TICKER = '<div class="ticker"><div class="ticker-track">' + _tg + _tg + '</div></div>'
 
+def _disco_svg():
+    """A silver mirror-tile disco ball, generated as inline SVG."""
+    import random
+    cx, cy, r = 60, 70, 52
+    random.seed(11)
+    step, t = 7.6, 6.6
+    rects = []
+    y = cy - r
+    while y <= cy + r:
+        x = cx - r
+        while x <= cx + r:
+            mx, my = x + t / 2, y + t / 2
+            if ((mx - cx) ** 2 + (my - cy) ** 2) ** 0.5 <= r - 1.2:
+                rv = random.random()
+                if rv < 0.05:
+                    fill = "#ffffff"
+                elif rv < 0.15:
+                    fill = random.choice(["#5b6678", "#6f7b8d", "#4f5969"])
+                else:
+                    fill = random.choice(["#fbfdff", "#eef2f8", "#dde5ee", "#c9d2dd",
+                                          "#b3bdca", "#9ca7b6", "#e6ebf2", "#d3dbe5"])
+                rects.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="0.5" fill="%s"/>'
+                             % (x + 0.5, y + 0.5, t, t, fill))
+            x += step
+        y += step
+    facets = "".join(rects)
+    return ('<svg viewBox="0 0 120 142" xmlns="http://www.w3.org/2000/svg">'
+            '<defs>'
+            '<clipPath id="cb"><circle cx="60" cy="70" r="52"/></clipPath>'
+            '<radialGradient id="dhl" cx="36%" cy="32%" r="55%">'
+            '<stop offset="0%" stop-color="#fff" stop-opacity="0.95"/>'
+            '<stop offset="45%" stop-color="#fff" stop-opacity="0.12"/>'
+            '<stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>'
+            '<radialGradient id="dsh" cx="40%" cy="36%" r="64%">'
+            '<stop offset="52%" stop-color="#000" stop-opacity="0"/>'
+            '<stop offset="100%" stop-color="#070a12" stop-opacity="0.62"/></radialGradient>'
+            '</defs>'
+            '<rect x="59" y="8" width="2" height="13" fill="#c7d0db"/>'
+            '<circle cx="60" cy="10" r="4.5" fill="none" stroke="#cdd6e0" stroke-width="2"/>'
+            '<g clip-path="url(#cb)">'
+            '<circle cx="60" cy="70" r="52" fill="#39414f"/>'
+            + facets +
+            '<circle cx="60" cy="70" r="52" fill="url(#dsh)"/>'
+            '<ellipse cx="45" cy="53" rx="30" ry="26" fill="url(#dhl)"/>'
+            '</g></svg>')
+
+DISCO_BALL = _disco_svg()
+
 # ---- Helpers --------------------------------------------------------------
 def imgs_for(slug):
     files = sorted(glob.glob(os.path.join(ROOT, "images", slug, "*")))
@@ -253,7 +311,7 @@ def nav(prefix=""):
 <div class="lasers" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="strobe" aria-hidden="true"></div>
 <div class="disco-light" aria-hidden="true"></div>
-<div class="disco" aria-hidden="true"><div class="disco-rope"><span class="disco-cord"></span><span class="disco-ball"></span></div></div>
+<div class="disco" aria-hidden="true"><div class="disco-rope"><span class="disco-cord"></span><span class="disco-ball">{DISCO_BALL}</span></div></div>
 <svg class="defs" width="0" height="0" aria-hidden="true"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="18" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 16 -7" result="g"/><feBlend in="SourceGraphic" in2="g"/></filter></defs></svg>
 <div class="colorbar"></div>
 <header class="nav">
@@ -288,32 +346,18 @@ def footer(prefix=""):
 
 # ---- Index ----------------------------------------------------------------
 def build_index():
-    feat = next(p for p in PROJECTS if p.get("featured"))
-    fimgs = imgs_for(feat["slug"])
-    fhero = f'images/{feat["slug"]}/{feat["hero"]}'
-    featured = f"""
-<section class="featured" data-reveal style="--accent:{feat['accent']}">
-  <a class="feat-card" href="work/{feat['slug']}.html">
-    <div class="feat-img"><img src="{fhero}" alt="{feat['title']}"></div>
-    <div class="feat-text">
-      <span class="feat-kicker">Featured work</span>
-      <h3>{feat['title']}</h3>
-      <p>{feat['brief']}</p>
-      <span class="feat-link">View project <span class="arr">&rarr;</span></span>
-    </div>
-  </a>
-</section>"""
-
-    cards = ""
-    for g in GROUPS:
-        cards += f'\n<h3 class="group-label" data-reveal>{g}</h3>\n<div class="grid">\n'
-        for p in [x for x in PROJECTS if x["group"] == g and not x.get("featured")]:
-            hero = f'images/{p["slug"]}/{p["hero"]}'
-            cards += f"""  <a class="card" data-reveal href="work/{p['slug']}.html" style="--accent:{p['accent']}">
-    <div class="card-img"><img loading="lazy" src="{hero}" alt="{p['title']}"></div>
-    <div class="card-meta"><span class="card-title">{p['title']}</span><span class="card-tag">{p['tag']}</span></div>
-  </a>\n"""
-        cards += "</div>\n"
+    cards = "".join(
+        f'<a class="card" href="work/{p["slug"]}.html" style="--accent:{p["accent"]}">'
+        f'<div class="card-img"><img loading="lazy" src="images/{p["slug"]}/{p["hero"]}" alt="{p["title"]}"></div>'
+        f'<div class="card-meta"><span class="card-title">{p["title"]}</span><span class="card-tag">{p["tag"]}</span></div>'
+        f'</a>'
+        for p in PROJECTS
+    )
+    carousel = (f'<div class="carousel">'
+                f'<button class="car-arrow prev" type="button" aria-label="Previous projects">&larr;</button>'
+                f'<div class="car-track">{cards}</div>'
+                f'<button class="car-arrow next" type="button" aria-label="Next projects">&rarr;</button>'
+                f'</div>')
 
     squiggle = ('<svg class="squiggle" viewBox="0 0 320 22" fill="none" preserveAspectRatio="none" aria-hidden="true">'
                 '<path d="M4 14 C 54 4, 96 20, 150 11 S 250 3, 316 13" stroke="url(#sg)" stroke-width="6" stroke-linecap="round"/>'
@@ -329,24 +373,20 @@ def build_index():
       <span class="hand-note" data-reveal>color in the world<svg viewBox="0 0 60 40" fill="none" aria-hidden="true"><path d="M55 4 C 30 6, 8 14, 6 33 M6 33 L2 24 M6 33 L15 30" stroke="#FF2E93" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <p class="hero-kicker" data-reveal>Brand &amp; graphic designer · New York</p>
       <h1 class="hero-h1" data-reveal>I design brand,<br>packaging, and<br>campaigns that<br>make people<br><span class="hl">look twice.</span>{squiggle}</h1>
-      <p class="hero-sub" data-reveal>I'm a Brand Designer for the New York Knicks at Madison Square Garden, leading brand work from in-arena to out-of-home. I also founded <a href="https://www.instagram.com/colorintheworld/" target="_blank" rel="noopener">@colorintheworld</a>, a color-first art brand with 80K+ followers. I'm happiest on work that lets me think in color and concept, not just execute.</p>
+      <p class="hero-sub" data-reveal>Brand Designer for the New York Knicks at Madison Square Garden, and founder of <a href="https://www.instagram.com/colorintheworld/" target="_blank" rel="noopener">@colorintheworld</a> (80K+ followers). I love work that lets me think in color and concept, not just execute.</p>
       <div class="hero-actions" data-reveal><a class="btn" href="#work">See the work</a><a class="btn ghost" href="mailto:dekomsky@gmail.com">Get in touch</a></div>
     </div>
     <div class="hero-portrait" data-reveal>
+      <img class="star-halo h1" src="images/star-burst.png" alt="" aria-hidden="true">
+      <img class="star-halo h2" src="images/star-burst.png" alt="" aria-hidden="true">
       <img class="portrait-flat" src="images/star-composite.png" alt="Dana Komsky">
-      <div class="star" aria-hidden="true">
-        <img class="star-burst" src="images/star-burst.png" alt="">
-        <img class="star-name" src="images/star-name.png" alt="">
-        <div class="star-her"><img src="images/star-her.png" alt=""></div>
-      </div>
     </div>
   </div>
 </section>
 
 <section class="work" id="work">
   <div class="section-head" data-reveal><h2>Selected work</h2><p>Sports brands, seasonal campaigns, packaging, and concept work.</p></div>
-  {featured}
-  {cards}
+  {carousel}
 </section>
 """ + footer()
     open(os.path.join(ROOT, "index.html"), "w").write(html)
