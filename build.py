@@ -346,18 +346,16 @@ def footer(prefix=""):
 
 # ---- Index ----------------------------------------------------------------
 def build_index():
-    cards = "".join(
-        f'<a class="card" href="work/{p["slug"]}.html" style="--accent:{p["accent"]}">'
-        f'<div class="card-img"><img loading="lazy" src="images/{p["slug"]}/{p["hero"]}" alt="{p["title"]}"></div>'
-        f'<div class="card-meta"><span class="card-title">{p["title"]}</span><span class="card-tag">{p["tag"]}</span></div>'
-        f'</a>'
-        for p in PROJECTS
-    )
-    carousel = (f'<div class="carousel">'
-                f'<button class="car-arrow prev" type="button" aria-label="Previous projects">&larr;</button>'
-                f'<div class="car-track">{cards}</div>'
-                f'<button class="car-arrow next" type="button" aria-label="Next projects">&rarr;</button>'
-                f'</div>')
+    cards = ""
+    for g in GROUPS:
+        group_cards = "".join(
+            f'<a class="card" data-reveal href="work/{p["slug"]}.html" style="--accent:{p["accent"]}">'
+            f'<div class="card-img"><img loading="lazy" src="images/{p["slug"]}/{p["hero"]}" alt="{p["title"]}"></div>'
+            f'<div class="card-meta"><span class="card-title">{p["title"]}</span><span class="card-tag">{p["tag"]}</span></div>'
+            f'</a>'
+            for p in PROJECTS if p["group"] == g
+        )
+        cards += f'<h3 class="group-label" data-reveal>{g}</h3>\n<div class="grid">{group_cards}</div>\n'
 
     squiggle = ('<svg class="squiggle" viewBox="0 0 320 22" fill="none" preserveAspectRatio="none" aria-hidden="true">'
                 '<path d="M4 14 C 54 4, 96 20, 150 11 S 250 3, 316 13" stroke="url(#sg)" stroke-width="6" stroke-linecap="round"/>'
@@ -372,13 +370,12 @@ def build_index():
     <div class="hero-text">
       <span class="hand-note" data-reveal>color in the world<svg viewBox="0 0 60 40" fill="none" aria-hidden="true"><path d="M55 4 C 30 6, 8 14, 6 33 M6 33 L2 24 M6 33 L15 30" stroke="#FF2E93" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <p class="hero-kicker" data-reveal>Brand &amp; graphic designer · New York</p>
-      <h1 class="hero-h1" data-reveal>I design brand,<br>packaging, and<br>campaigns that<br>make people<br><span class="hl">look twice.</span>{squiggle}</h1>
+      <h1 class="hero-h1" data-reveal>I design brand, packaging, and campaigns that make people <span class="hl">look twice.</span>{squiggle}</h1>
       <p class="hero-sub" data-reveal>Brand Designer for the New York Knicks at Madison Square Garden, and founder of <a href="https://www.instagram.com/colorintheworld/" target="_blank" rel="noopener">@colorintheworld</a> (80K+ followers). I love work that lets me think in color and concept, not just execute.</p>
       <div class="hero-actions" data-reveal><a class="btn" href="#work">See the work</a><a class="btn ghost" href="mailto:dekomsky@gmail.com">Get in touch</a></div>
     </div>
     <div class="hero-portrait" data-reveal>
-      <img class="star-halo h1" src="images/star-burst.png" alt="" aria-hidden="true">
-      <img class="star-halo h2" src="images/star-burst.png" alt="" aria-hidden="true">
+      <img class="star-halo" src="images/star-burst.png" alt="" aria-hidden="true">
       <img class="portrait-flat" src="images/star-composite.png" alt="Dana Komsky">
     </div>
   </div>
@@ -386,7 +383,7 @@ def build_index():
 
 <section class="work" id="work">
   <div class="section-head" data-reveal><h2>Selected work</h2><p>Sports brands, seasonal campaigns, packaging, and concept work.</p></div>
-  {carousel}
+  {cards}
 </section>
 """ + footer()
     open(os.path.join(ROOT, "index.html"), "w").write(html)
